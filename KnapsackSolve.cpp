@@ -10,9 +10,9 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 		filepath = argv[1];
 	else
-		filepath = "C:\\Users\\Flavio\\Documents\\PUC\\2019.1\\Análise de Algoritmos\\aa-trab3\\instances\\inst2.txt";
+		filepath = "C:\\Users\\Flavio\\Documents\\PUC\\2019.1\\Análise de Algoritmos\\aa-trab3\\instances\\inst8.txt";
 
-	FILE *file = freopen(filepath, "r", stdin);
+	FILE* file = freopen(filepath, "r", stdin);
 	if (file == NULL)
 	{
 		cout << "Error! Failed to find file. Check path parameter used.";
@@ -29,10 +29,10 @@ int main(int argc, char* argv[])
 	}
 
 	// states we have visited and know how to solve
-	vector<vector<vector<int>>> memorizedStates (numItems + 1, vector<vector<int>>(bagSize + 1, vector<int>(11)));
+	vector<vector<vector<int>>> memorizedStates(numItems + 1, vector<vector<int>>(bagSize + 1, vector<int>(11)));
 
 	// item choices for each possible state
-	vector<vector<vector<int>>> itemChoices (numItems + 1, vector<vector<int>>(bagSize + 1, vector<int>(11)));
+	vector<vector<vector<int>>> itemChoices(numItems + 1, vector<vector<int>>(bagSize + 1, vector<int>(11)));
 
 	for (int i = 0; i <= numItems; i++)
 	{
@@ -52,10 +52,15 @@ int main(int argc, char* argv[])
 						memorizedStates[i][w][c] = memorizedStates[i - 1][w][10];
 						itemChoices[i][w][c] = itemChoices[i - 1][w][10];
 					}
-					else 
+					else
 					{
 						// Choice: use or not use
-						int useItem = itemValues[i - 1] + memorizedStates[i][w - itemWeights[i - 1]][c - 1];
+						int useItem;
+						if (c - 1 > 0)
+							useItem = itemValues[i - 1] + memorizedStates[i][w - itemWeights[i - 1]][c - 1];
+						else
+							useItem = itemValues[i - 1] + memorizedStates[i - 1][w - itemWeights[i - 1]][10];
+
 						int notUse = memorizedStates[i - 1][w][10];
 
 						// We will use the best
@@ -83,7 +88,13 @@ int main(int argc, char* argv[])
 
 	while (chosenItem != 0)
 	{
-		int item = itemChoices[chosenItem][weightLeft][count];
+		int item; 
+
+		if (count > 0)
+			item = itemChoices[chosenItem][weightLeft][count];
+		else
+			item = itemChoices[chosenItem - 1][weightLeft][10];
+
 		if (item == chosenItem)
 		{
 			count--;

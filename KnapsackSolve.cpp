@@ -40,10 +40,15 @@ int main(int argc, char* argv[])
 		{
 			for (int c = 0; c <= 10; c++)
 			{
-				if (i == 0 || w == 0 || c == 0)
+				if (i == 0 || w == 0)
 				{
 					memorizedStates[i][w][c] = 0;
 					itemChoices[i][w][c] = 0;
+				}
+				else if (c == 0)
+				{
+					memorizedStates[i][w][c] = memorizedStates[i - 1][w][10];
+					itemChoices[i][w][c] = itemChoices[i - 1][w][10];
 				}
 				else
 				{
@@ -55,11 +60,7 @@ int main(int argc, char* argv[])
 					else
 					{
 						// Choice: use or not use
-						int useItem;
-						if (c - 1 > 0)
-							useItem = itemValues[i - 1] + memorizedStates[i][w - itemWeights[i - 1]][c - 1];
-						else
-							useItem = itemValues[i - 1] + memorizedStates[i - 1][w - itemWeights[i - 1]][10];
+						int useItem = itemValues[i - 1] + memorizedStates[i][w - itemWeights[i - 1]][c - 1];
 
 						int notUse = memorizedStates[i - 1][w][10];
 
@@ -88,13 +89,7 @@ int main(int argc, char* argv[])
 
 	while (chosenItem != 0)
 	{
-		int item; 
-
-		if (count > 0)
-			item = itemChoices[chosenItem][weightLeft][count];
-		else
-			item = itemChoices[chosenItem - 1][weightLeft][10];
-
+		int item = itemChoices[chosenItem][weightLeft][count];
 		if (item == chosenItem)
 		{
 			count--;
